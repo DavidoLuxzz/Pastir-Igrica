@@ -26,7 +26,7 @@ public class LvlLoader {
         ws.clear();
         wsCounter=0;
         try {
-            File myObj = new File("src/"+stage+".txt");
+            File myObj = new File(stage+".txt");
             try (Scanner myReader = new Scanner(myObj)) {
                 while (myReader.hasNextLine()) {
                     String[] data = myReader.nextLine().split(" ");
@@ -67,7 +67,7 @@ public class LvlLoader {
     }
     public void _loadTriggers(int zero){
         try {
-            File myObj = new File("src/"+zero+".txt");
+            File myObj = new File(zero+".txt");
             try (Scanner myReader = new Scanner(myObj)) {
                 while (myReader.hasNextLine()) {
                     String[] data = myReader.nextLine().split(" ");
@@ -86,7 +86,7 @@ public class LvlLoader {
                 myReader.close();
             }
             _loadTriggers(zero+1);
-        } catch (FileNotFoundException _) {
+        } catch (FileNotFoundException __) {
         }
     }
     public ArrayList<int[]> getLevel(){

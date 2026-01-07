@@ -1,15 +1,14 @@
 package com.lux;
 
 import com.lux.controls.DialogBox;
-import com.lux.level.Drawable;
 import com.lux.level.NPCLoader;
 import com.lux.level.Rooms;
 import com.lux.level.SaveManager;
+import com.lux.level.Trigger;
 import com.lux.controls.MusicPlayer;
 import com.lux.entity.Entities;
 import com.lux.entity.Entity;
 import com.lux.entity.Player;
-import com.lux.level.Trigger;
 
 import java.util.ArrayList;
 
@@ -22,26 +21,24 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 
 public class Main extends Application {
-    private Rooms rooms; // all possible rooms stored in one list
+    public static Rooms rooms; // all possible rooms stored in one list
 
-    private int LEVEL_WIDTH;
-    private int LEVEL_HEIGHT;
+    private static int LEVEL_WIDTH;
+    private static int LEVEL_HEIGHT;
     
-    private boolean zDown;
+    public static boolean zDown;
     
-    private DialogBox dialogBox;
+    private static MusicPlayer music;
+    public static Player player;
+    private static Timeline timer;
+    public static int roomID;
+    // private SaveManager saveManager;
     
-    private MusicPlayer music;
-    private Player player;
-    private Timeline timer;
-    public int roomID;
-    private SaveManager saveManager;
+    private static Entities entities;
     
-    private Entities entities;
+    static Display root;
     
-    Display root;
-    
-    SceneType currentScene = SceneType.PLAY_SCREEN;
+    static SceneType currentScene = SceneType.PLAY_SCREEN;
     
     @Override
     public void start(Stage stage) {     
@@ -51,37 +48,18 @@ public class Main extends Application {
         
         player = new Player();
         player.relocate(70, 70); // default spawn position
-        root.add(player);
+        //root.add(player);
+        //root.add(player.getSlashAnimation());
         
-        int[] saveData = saveManager.loadSave();
-        if (saveData != null) {
-        	System.out.println("Save data avaiable!");
-        	roomID = saveData[0];
-        	player.reqRelocate(saveData[1], saveData[2]);
-        }
+        loadNPCs();
+        loadSaveData();
+        initRooms();
         
-        rooms.load();
-        rooms.updateNodeGroup(roomID);
-        drawObjects();
-        applyLevelDimensions();
-        player.createCWOS(rooms.get(roomID));
         
-        rooms.loadTriggers();
-        System.out.println("Loaded triggers: "+rooms.getTriggers().size());
-        rooms.loadRemovedTriggers(saveData);
-        preexecuteTriggers(rooms.getRemovedTriggerIndices());
-        rooms.removeRemovableTriggers();
-        System.out.println("Removed triggers: "+rooms.getRemovedTriggerIndices().size());
-        
-        NPCLoader npcLoader = new NPCLoader();
-        entities = npcLoader.load();
-        entities.applyRoom(roomID);
-        root.addAll(entities.getNodeGroup());
-        
-        root.addDynamics(rooms, entities);
-                
-        saveData = null;
+
         System.gc();
+        
+        forceChangeRoom(roomID);
         
         music.play();
         gameLoop();
@@ -92,7 +70,54 @@ public class Main extends Application {
         stage.show();
     }
     
-    private void initKeyboardEvents(){
+    
+    private static void addAllToRoot() {
+    	drawObjects();
+        root.add(player);
+        root.add(player.getSlashAnimation());
+        
+        root.addAll(entities.getNodeGroup());
+        DialogBox.addToRoot(root);
+    }
+    
+    
+    private static int[] loadSaveData() {
+    	int[] saveData = SaveManager.loadSave();
+        if (saveData != null) {
+        	System.out.println("Save data avaiable!");
+        	roomID = saveData[0];
+        	player.reqRelocate(saveData[1], saveData[2]);
+        	if (player.getInventory().contains(Item.NIKE_SHOES))
+        		player.loadPlayerTiles(true);
+        	entities.removeRemovable();
+        }
+        return saveData;
+    }
+    
+    private static void initRooms() {
+    	rooms.load();
+        rooms.updateNodeGroup(roomID);
+        //drawObjects();
+        applyLevelDimensions();
+        player.createCWOS(rooms.get(roomID));
+        
+        rooms.loadTriggers();
+        System.out.println("Loaded triggers: "+rooms.getTriggers().size());
+        // rooms.loadRemovedTriggers(saveData); // this will be called in SaveManager.loadSave
+        rooms.preexecuteTriggers(rooms.getRemovedTriggerIndices()); // this will be removed
+        // trigger preexecution will be removed, and map change properties (saveData) will be added
+        System.out.println("Removed triggers: "+rooms.getRemovedTriggerIndices().size());
+    }
+    
+    private static void loadNPCs() {
+        entities = NPCLoader.load();
+        entities.applyRoom(roomID);
+        // root.addAll(entities.getNodeGroup());
+        
+        root.addDynamics(rooms, entities);
+    }
+    
+    private static void initKeyboardEvents(){
         root.getScene().setOnKeyPressed((evt) -> {
             if (evt.getCode()!=null)switch(evt.getCode()){
                 case ESCAPE:
@@ -117,13 +142,12 @@ public class Main extends Application {
                     player.right(1);
                     break;
                 case T:
-                    dialogBox.setDialog(Dialog.DIALOG_0);
-                    dialogBox.show();
-                    break;
+                    DialogBox.setDialog(Dialog.DIALOG_0);
+                    DialogBox.show();
                 case Z:
                 case ENTER:
-                    if (dialogBox.isFinished() && player.isBusy()){
-                        dialogBox.sendCloseRequest();
+                    if (DialogBox.isFinished() && player.isBusy()){
+                        DialogBox.sendCloseRequest();
                     } else {
                         zDown = true;
                         checkEntityInteractions();
@@ -131,14 +155,28 @@ public class Main extends Application {
                     break;
                 case SHIFT:
                 case X:
-                    if (!player.isBusy())
-                        player.setSpeedMultiplier(1.5);
-                    else if (!dialogBox.isFinished()){
-                        dialogBox.sendSkipRequest();
+                    if (!player.isBusy()) {
+                    	player.slash(); // will check first if has an ability to slash
+            		} else if (!DialogBox.isFinished()){
+                        DialogBox.sendSkipRequest();
                     }
                     break;
+                case C:
+                	if (!player.isBusy() && player.inventory.contains(Item.NIKE_SHOES))
+                		player.setSpeedMultiplier(Player.SPRINT_MULTIPLIER);
+                	break;
                 case TAB:
-                	if (!player.isBusy()) saveManager.save();
+                	if (!player.isBusy()) SaveManager.save();
+                	break;
+                case I:
+                	if (!player.isBusy()) player.inventory.showInventory();
+                	break;
+                case P:
+                	System.out.println("----------------------------------");
+                	for (Trigger t : rooms.getTriggers()) {
+                		if (rooms.isTriggerRemoved(t)) System.out.print("(removed)");
+                    	System.out.println("Trigger: room: "+t.getRoom()+", action: " + t.getAction()+ ", x: "+t.getX()+", y: "+t.getY());
+                    }
                 	break;
                 default:
                     break;
@@ -167,7 +205,7 @@ public class Main extends Application {
                     zDown = false;
                     break;
                 case SHIFT:
-                case X:
+                case C:
                     player.setSpeedMultiplier(1.0);
                     break;
                 default:
@@ -176,35 +214,31 @@ public class Main extends Application {
         });
     }
     
-    private void initComponents(){
+    private static void initComponents(){
         music = new MusicPlayer("project.mp3");
         rooms = new Rooms();
-        dialogBox = new DialogBox(this);
-        saveManager = new SaveManager(this);
+        DialogBox.init();
     }
     
-    private void applyLevelDimensions() {
-    	LEVEL_WIDTH  = rooms.getRoomSizes().get(roomID)[0];
-    	LEVEL_HEIGHT = rooms.getRoomSizes().get(roomID)[1];
+    private static void applyLevelDimensions() {
+    	LEVEL_WIDTH  = Rooms.getRoomSizes().get(roomID)[0];
+    	LEVEL_HEIGHT = Rooms.getRoomSizes().get(roomID)[1];
     	root.applyLevelDimensions(LEVEL_WIDTH, LEVEL_HEIGHT);
     }
-    private void drawObjects() {
+    private static void drawObjects() {
     	root.add(rooms.getNodeGroup());
     }
     
-    private void forceChangeRoom(int room){
+    public static void forceChangeRoom(int room){
         root.clear();
         roomID = room;
         rooms.updateNodeGroup(room);
-        drawObjects();
-        applyLevelDimensions();
-        root.add(player);
         player.updateCWOS(rooms.get(room));
-        
         entities.applyRoom(room);
-        root.addAll(entities.getNodeGroup());
+        addAllToRoot();
+        applyLevelDimensions();
     }
-    private void smoothChangeRoom(int room, int[] spawn){
+    public static void smoothChangeRoom(int room, int[] spawn){
         root.startFade(500, 0.0, 1.0);
         player.setBusy(true);
         root.setOnFadeFinished((e) -> {
@@ -214,75 +248,26 @@ public class Main extends Application {
             player.setBusy(false);
         });
     }
-    private void preexecuteTriggers(ArrayList<Integer> indices) {
-    	for (int i : indices) {
-    		Trigger tr = rooms.getTriggers().get(i);
-	    	if (tr.getAction() != Event.TEXTURE_CHANGE) return;
-	    	executeTrigger(tr);
-    	}
-    }
-    private void executeTrigger(Trigger tr) {
-    	switch (tr.getAction()){
-	        case Event.DIALOG_INTERRUPT: // dialog interrupt
-	            dialogBox.setDialog(Dialog.getDialog(tr.getSpecial()));
-	            dialogBox.show();
-	            break;
-	        case Event.CHANGE_ROOM:      // change room
-	            smoothChangeRoom(tr.getSpecial(), tr.getSpecial23());
-	            return;
-	        case Event.TEXTURE_CHANGE:
-	        	for (Drawable drw : rooms.getObjectGroupWithID(tr.getSpecial())) {
-	        		drw.setTexture(tr.getSpecial2());
-	        		drw.setSolid(tr.getSpecial3() > 0);
-	        		
-	        		if (tr.getSpecial3() > 0)  player.addStaticObject(drw);
-	        		else player.removeStaticObject(drw);
-	        	}
-	        	break;
-	        default:
-	            break;
-	    }
-    }
-    private void checkTriggers(){
-        if (!player.isBusy()){
-            ArrayList<Trigger> toRemove = new ArrayList<>();
-            for (Trigger tr : rooms.getTriggers()) {
-                if (tr.getRoom() == roomID){  // trigger is in this room thus can be intersected with
-                    if (player.getHitbox().intersects(tr.getHitbox())){
-                        if (!tr.needsZ() || zDown) {
-                            executeTrigger(tr);
-                            if (tr.removeAfterInteraction()) {
-                            	toRemove.add(tr);
-                            	rooms.getRemovedTriggerIndices().add(rooms.getTriggers().indexOf(tr));
-                            	tr = null;
-                            }
-                        }
-                    }
-                }
-                if (player.isBusy()) break;
-            }
-            if (!toRemove.isEmpty()) rooms.getTriggers().removeAll(toRemove);
-        }
-    }
-    private void checkEntityInteractions() {
+    
+    private static void checkEntityInteractions() {
     	if (!player.isBusy()) {
-    		for (Entity e : entities) {
-    			if (e.getRoom() == roomID)
-		    		if (player.getExpandedHitbox().intersects(e.getExpandedHitbox())) {
-		    			executeTrigger(e.getInteractionTrigger());
-		    		}
+    		for (Entity e : entities.getNodeGroup()) {
+	    		if (player.getExpandedHitbox().intersects(e.getExpandedHitbox())) {
+	    			e.getInteractionTrigger().execute(e);
+	    		}
     		}
+    		entities.removeRemovable();
     	}
     }
     // try to avoid drawable triggers,  use normal invisible triggers instead and add drawable a group
     
-    private void gameLoop(){
+    private static void gameLoop(){
         timer = new Timeline(new KeyFrame(Duration.millis(16.66666), (e) -> {
         	if (currentScene == SceneType.PLAY_SCREEN) {
 	            // main game timeline
-	            player.update(entities.getAllFromRoom(roomID));
+	            player.update(entities.getNodeGroup());
 	            player.configurateSpeed();
-	            checkTriggers();
+	            rooms.checkTriggers();
 	            root.moveCamera(player);
 	            
 	            root.update();
@@ -293,22 +278,22 @@ public class Main extends Application {
         timer.play();
     }
     
-    public Player getPlayer(){
+    public static Player getPlayer(){
         return player;
     }
-    public Pane getRoot(){
+    public static Pane getRoot(){
         return root.getRoot();
     }
-    public Scene getScene(){
+    public static Scene getScene(){
         return root.getScene();
     }
-    public Display getDisplay(){
+    public static Display getDisplay(){
         return root;
     }
-    public Entities getEntities() {
+    public static Entities getEntities() {
     	return entities;
     }
-    public ArrayList<Integer> getRemovedTriggerIndices(){
+    public static ArrayList<Integer> getRemovedTriggerIndices(){
     	return rooms.getRemovedTriggerIndices();
     }
     

@@ -3,6 +3,13 @@ package com.lux.level;
 // triggers format:  [ interactionEventID  needsZ  specialValue  removeAfterInteraction  x  y  width  height  (special2)  (special3) ]
 
 import java.util.ArrayList;
+
+import com.lux.Dialog;
+import com.lux.Event;
+import com.lux.Main;
+import com.lux.controls.DialogBox;
+import com.lux.entity.Entity;
+
 import javafx.geometry.BoundingBox;
 
 public class Trigger {
@@ -123,6 +130,51 @@ public class Trigger {
         
         this.room = room;
     }
+    
+    public void execute(Entity triggerOwner) {
+    	switch (getAction()){
+	        case Event.DIALOG_INTERRUPT: // dialog interrupt
+	            DialogBox.setDialog(Dialog.getDialog(getSpecial()));
+	            DialogBox.show();
+	            break;
+	        case Event.DIALOG_INTERRUPT_THEN_SUDDEN_DISAPPEAR:
+	        	DialogBox.setDialog(Dialog.getDialog(getSpecial()));
+	        	DialogBox.show();
+	        	break;
+	        case Event.CHANGE_ROOM:      // change room
+	            Main.smoothChangeRoom(getSpecial(), getSpecial23());
+	            return;
+	        case Event.TEXTURE_CHANGE:
+	        	textureChange();
+	        	break;
+	        case Event.GIVE_ITEM:
+	        	giveItem();
+	        	break;
+	        case Event.GIVEN_ITEM_THEN_DISAPPEAR:
+	        	giveItem();
+	        	triggerOwner.disappear();
+	        	break;
+	        default:
+	            break;
+	    }
+    }
+    
+    private void textureChange() {
+    	for (Drawable drw : Main.rooms.getObjectGroupWithID(getSpecial())) {
+    		drw.setTexture(getSpecial2());
+    		drw.setSolid(getSpecial3() > 0);
+    		
+    		if (getSpecial3() > 0)  Main.getPlayer().addStaticObject(drw);
+    		else Main.getPlayer().removeStaticObject(drw);
+    	}
+    }
+    
+    
+    private void giveItem() {
+    	Main.getPlayer().inventory.addWithDialog(getSpecial());
+    }
+    
+    
     
     public static ArrayList<Trigger> loadTriggerArray(ArrayList<int[]> t){
         ArrayList<Trigger> ret = new ArrayList<>();

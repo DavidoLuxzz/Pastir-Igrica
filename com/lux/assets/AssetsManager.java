@@ -5,6 +5,25 @@ import javafx.scene.media.Media;
 import javafx.scene.text.Font;
 
 public class AssetsManager {
+	
+	public static Image[] ENTITY_IMAGES = null;
+	
+	public static final int ENTITY_IMAGE_SHEEP = 0;
+	public static final int ENTITY_IMAGE_NIKE_SHOES = 1;
+	
+	public static void loadEntityImages() {
+		if (ENTITY_IMAGES != null) {
+			System.err.println("Tried to regenerate entity image list.");
+			return;
+		}
+		ENTITY_IMAGES = new Image[] {getImage("sheep.png",3,3),
+									getImage("nike_shoes.png",1,1)};
+	}
+	public static Image getEntityImage(int img) {
+		return ENTITY_IMAGES[img];
+	}
+	
+	public static final Image DIALOGBOX = AssetsManager.getImage("dialog_box.png", 4, 2.5);
     public static Image getImage(String asset, double scalex, double scaley){
         Image img = null;
         Image instance;
@@ -38,6 +57,7 @@ public class AssetsManager {
         }
         return mus;
     }
+    public static final Font KONGTEXT = AssetsManager.getFont("kongtext.ttf", 28);
     public static Font getFont(String font, double size){
         Font f = null;
         try {

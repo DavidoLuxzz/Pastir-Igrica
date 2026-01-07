@@ -8,8 +8,8 @@ public class Game {
     public static final String FULL_NAME = "Sheep: Java Edition";
     public static final String TITLE = "Sheep";
     public static final String TITLE_EASTER = "ShEASTER";
-    public static final String TITLE_CHRISTMAS = "Sheep: Father's birthday";
-    public static final String TITLE_BOZIC = "Sheep: Tata, volim te!";
+    public static final String TITLE_CHRISTMAS = "Sheep: Lord Jesus' birthday";
+    public static final String TITLE_BOZIC = "Sheep: Bozic";
     public static final String PLATFORM = System.getProperty("os.name");
     public static final int MONTH = LocalDate.now().getMonthValue();
     public static final int DAY = LocalDate.now().getDayOfMonth();

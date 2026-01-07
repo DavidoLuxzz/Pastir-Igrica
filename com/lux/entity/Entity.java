@@ -1,6 +1,8 @@
 package com.lux.entity;
 
 import com.lux.DynamicObject;
+import com.lux.Main;
+import com.lux.assets.AssetsManager;
 import com.lux.level.Trigger;
 
 import javafx.geometry.BoundingBox;
@@ -16,11 +18,12 @@ public class Entity extends Sprite implements DynamicObject {
 		super();
 		interactionTrigger = new Trigger(0, false, 0, false, 0, 0, 0, 0, 0, 0);
 	}
-	public Entity(int x, int y, int room) {
+	public Entity(int x, int y, int room, int texture) {
 		super();
 		interactionTrigger = new Trigger(0, false, 0, false, 0, 0, 0, 0, 0, 0);
 		relocate(x, y);
 		setRoom(room);
+		setImage(AssetsManager.getEntityImage(texture));
 	}
 
 	public Entity(Image img) {
@@ -33,6 +36,10 @@ public class Entity extends Sprite implements DynamicObject {
     	motherX = x;
     	motherY = y;
     }
+	
+	public void disappear() {
+		Main.getEntities().addToRemoveQueue(this); // unlink
+	}
 	
 	public void setInteractionTrigger(Trigger tr) {
 		interactionTrigger = tr;

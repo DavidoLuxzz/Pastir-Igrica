@@ -1,76 +1,79 @@
 package com.lux.controls;
 
 import com.lux.Main;
-import com.lux.DynamicObject;
+import com.lux.Display;
 import com.lux.assets.AssetsManager;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
-public class DialogBox implements DynamicObject {
-    private ImageView boxView;
-    private Main main;
-    private Font font;
-    private Text text;
-    private int yOffset = 16; // offset between box and screen bottom
+public class DialogBox {
+    private static ImageView boxView;
+    // private Main main;
+    private static Text text;
+    private final static int yOffset = 16; // offset between box and screen bottom
     
-    private boolean textAnimFinished = false;
-    private Timeline anim;
+    private static boolean textAnimFinished = false;
+    private static Timeline anim;
     
-    private String[] currentDialog = {"* ..."};
-    private int currentIndex;
+    private static String[] currentDialog = {"* ..."};
+    private static int currentIndex = 0;
     
-    private int currentCharacterID = 0;
+    private static int currentCharacterID = 0;
+    
+    public static void init(){
+        // this.main = main;
 
-    public DialogBox(Main main){
-        this.main = main;
-
-        boxView = new ImageView(AssetsManager.getImage("dialog_box.png", 4, 2.5));
-        boxView.setLayoutX(main.getScene().getWidth()/2 - boxView.getImage().getWidth()/2);
-        boxView.setLayoutY(main.getScene().getHeight() - boxView.getImage().getHeight() - yOffset);
+        boxView = new ImageView(AssetsManager.DIALOGBOX);
+        boxView.setLayoutX(Main.getScene().getWidth()/2 - boxView.getImage().getWidth()/2);
+        boxView.setLayoutY(Main.getScene().getHeight() - boxView.getImage().getHeight() - yOffset);
         
-        font = AssetsManager.getFont("kongtext.ttf", 28);
         text = new Text("");
-        text.setFont(font);
+        text.setFont(AssetsManager.KONGTEXT);
         text.setFill(Color.WHITE);
         text.relocate(boxView.getLayoutX() + 50, boxView.getLayoutY() + 50);
         
         boxView.setViewOrder(-3998);
         text.setViewOrder(-3999);
+        
+        boxView.setVisible(false);
+    	text.setVisible(false);
     }
     public void relocate(double x, double y){
         boxView.relocate(x, y);
     }
-    public void setDialog(String[] log){
+    public static void setDialog(String[] log){
         currentDialog = log;
     }
-    public void show(){
-        if (!main.getRoot().getChildren().contains(boxView)){
-            main.getRoot().getChildren().add(boxView);
-            main.getRoot().getChildren().add(text);
-            typingAnimation(currentDialog[currentIndex], 40).play();
-        }
-        main.getPlayer().setBusy(true);
+    public static void addToRoot(Display root) {
+    	root.add(boxView);
+    	root.add(text);
     }
-    public void hide(){
-        if (main.getRoot().getChildren().contains(boxView)){
-            main.getRoot().getChildren().remove(boxView);
-            main.getRoot().getChildren().remove(text);
-            currentIndex = 0;
-            text.setText("");
-        }
-        main.getPlayer().setBusy(false);
+    public static void show(){
+        boxView.setVisible(true);
+        text.setVisible(true);
+        currentIndex = 0;
+        typingAnimation(currentDialog[currentIndex], 40).play();
+        Main.getPlayer().setBusy(true);
+    }
+    public static void hide(){
+    	boxView.setVisible(false);
+    	text.setVisible(false);
+        currentIndex = 0;
+        text.setText("");
+        Main.getPlayer().setBusy(false);
+        System.out.println("hide");
     }
     
-    private Timeline typingAnimation(String string, double millis){
+    private static Timeline typingAnimation(String string, double millis){
         text.setText("");
         currentCharacterID = 0;
         textAnimFinished = false;
         anim = new Timeline(new KeyFrame(Duration.millis(millis), (e) -> {
+        	if (string.length()<1) return;
         	if (string.charAt(currentCharacterID) != 'ƒ')
         		text.textProperty().set(text.textProperty().get() + string.charAt(currentCharacterID));
     		currentCharacterID++;
@@ -82,16 +85,14 @@ public class DialogBox implements DynamicObject {
         return anim;
     }
     
-    public void updatePos(double x, double y){
-        if (main.getRoot().getChildren().contains(boxView)){
-            boxView.setLayoutX(x + main.getDisplay().DEFAULT_WIDTH/2 - boxView.getImage().getWidth()/2);
-            boxView.setLayoutY(y + main.getDisplay().getHeight()  - boxView.getImage().getHeight() - yOffset);
-            if (main.getPlayer().getCenterY()+30 > boxView.getLayoutY())
-                boxView.setLayoutY(y + yOffset);
-            text.relocate(boxView.getLayoutX() + 50, boxView.getLayoutY() + 50);
-        }
+    public static void updatePos(Display root, double x, double y){
+        boxView.setLayoutX(x + root.DEFAULT_WIDTH/2 - boxView.getImage().getWidth()/2);
+        boxView.setLayoutY(y + root.getHeight()  - boxView.getImage().getHeight() - yOffset);
+        if (Main.getPlayer().getCenterY()+30 > boxView.getLayoutY())
+            boxView.setLayoutY(y + yOffset);
+        text.relocate(boxView.getLayoutX() + 50, boxView.getLayoutY() + 50);
     }
-    public void sendCloseRequest(){
+    public static void sendCloseRequest(){
         if (textAnimFinished) {
             if (currentIndex+1 < currentDialog.length){
                 currentIndex++;
@@ -100,14 +101,14 @@ public class DialogBox implements DynamicObject {
                 hide();
         }
     }
-    public void sendSkipRequest(){
+    public static void sendSkipRequest(){
         if (!textAnimFinished) {
             anim.stop();
             textAnimFinished = true;
             text.setText(currentDialog[currentIndex].replaceAll("ƒ", ""));
         }
     }
-    public boolean isFinished(){
+    public static boolean isFinished(){
         return textAnimFinished;
     }
 }

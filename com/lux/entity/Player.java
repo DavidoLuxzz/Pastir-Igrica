@@ -1,6 +1,9 @@
 package com.lux.entity;
 
+import com.lux.Item;
+import com.lux.animation.Animation;
 import com.lux.assets.AssetsManager;
+import com.lux.controls.Inventory;
 import com.lux.level.Drawable;
 import java.util.ArrayList;
 import javafx.animation.KeyFrame;
@@ -11,7 +14,8 @@ import javafx.util.Duration;
 
 public class Player extends Sprite {
     private int w,s,a,d;
-    private double speed = 4.0D; // px/gt
+    private double speed = 2.0D; // px/gt
+    public static final double SPRINT_MULTIPLIER = 1.5; 
     private double speedm = 1.0D;
     private ArrayList<Drawable> cos;
     private ArrayList<Drawable> cws;
@@ -29,29 +33,53 @@ public class Player extends Sprite {
     private boolean walking;
     private int _aniIndex; // animation helper flag
     private Timeline walkAnim; // walk animation
+    private Animation slashAnim;
+    
+    public Inventory inventory;
     
     public Player() {
     	super(AssetsManager.getImage("player/w0.png",2,2));
         cos = new ArrayList<>();
         cws = new ArrayList<>();
-        loadPlayerTiles();
+        inventory = new Inventory();
+        loadPlayerTiles(false);
         initWalkAnimation();
+        loadSlashAnimation();
     }
     
     public Player(ArrayList<Drawable> objects){
         super(AssetsManager.getImage("player/w0.png",2,2));
         cos = new ArrayList<>();
         cws = new ArrayList<>();
+        inventory = new Inventory();
         createCWOS(objects);
-        loadPlayerTiles();
-        initWalkAnimation();        
+        loadPlayerTiles(false);
+        initWalkAnimation();
+        loadSlashAnimation();
     }
     
-    private void loadPlayerTiles(){
+   	public Animation getSlashAnimation() {
+   		return slashAnim;
+   	}
+    
+    private void loadSlashAnimation() {
+    	slashAnim = new Animation("slash", 3);
+    	slashAnim.hideAfterFinished(true);
+    	slashAnim.initAnimation(40, 3);
+    	slashAnim.setVisible(false);
+    }
+    
+    public void slash() {
+    	if (!getInventory().contains(Item.SLASH_ABILITY)) return;
+    	if (slashAnim.isFinished())
+    		slashAnim.playFromStart();
+    }
+    
+    public void loadPlayerTiles(boolean withNikes){
         tiles = new Image[16];
         for (int dir=0; dir<4; dir++){
             for (int i=0; i<4; i++){
-                tiles[dir*4 + i] = AssetsManager.getImage("player/"+"wsad".charAt(dir)+i+".png", 2, 2);
+                tiles[dir*4 + i] = AssetsManager.getImage((withNikes?"player_w_nike/":"player/")+"wsad".charAt(dir)+i+".png", 2, 2);
             }
         }
     }
@@ -137,12 +165,18 @@ public class Player extends Sprite {
             }
         }
     }
+    public int getDirection() {
+    	return direction;
+    }
+    
     public void update(ArrayList<Entity> entities){
         if (!busy){ // can't move if in dialog
             moveWithCollisionCheck(entities);
             orientate();
             walk();
             updateDepth();
+            slashAnim.setViewOrder(getViewOrder()-0.005);
+            slashAnim.orientatePriorToPlayer(this);
         }
     }
     public double getRequestedX() {
@@ -251,5 +285,14 @@ public class Player extends Sprite {
     }
     public int getSpawnY(){
         return spawnY;
+    }
+    public double getWorldX() {
+    	return getLayoutX()+camx;
+    }
+    public double getWorldY() {
+    	return getLayoutY()+camy;
+    }
+    public Inventory getInventory() {
+    	return inventory;
     }
 }

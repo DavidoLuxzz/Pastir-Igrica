@@ -9,24 +9,27 @@ import com.lux.entity.Entities;
 import com.lux.entity.Entity;
 
 public class NPCLoader {
-	private Entities npcs;
-	public NPCLoader() {
-		npcs = new Entities();
-	}
-	public Entities load(){
+	
+	public static Entities load(){
+		Entities npcs = new Entities();
+		AssetsManager.loadEntityImages();
         try {
-            File myObj = new File("src/ent.txt");
+            File myObj = new File("ent.txt");
             try (Scanner myReader = new Scanner(myObj)) {
 				while (myReader.hasNextLine()) {
-                    String[] data = myReader.nextLine().split(" ");
+					String line = myReader.nextLine();
+					if (line.replaceAll(" ", "").startsWith("#")) continue; // pass comments
+                    String[] data = line.split(" ");
                     if (data.length>2) {
-                    	// format:  [  x  y  room  act  spec  (spec2)  (spec3)  ]
-                    	Entity ent = new Entity(Integer.parseInt(data[0]), Integer.parseInt(data[1]), Integer.parseInt(data[2]));
-                    	ent.setImage(AssetsManager.getImage("sheep.png", 3, 3));
+                    	//             0  1   2       3      4    5       6       7
+                    	// format:  [  x  y  room  texture  act  spec  (spec2)  (spec3)  ]
+                    	// ako entity ima (spec2), pravilo je da mora da ima i (spec3)
+                    	Entity ent = new Entity(Integer.parseInt(data[0]), Integer.parseInt(data[1]), Integer.parseInt(data[2]), Integer.parseInt(data[3]));
+                    	// ent.setImage(AssetsManager.getImage("sheep.png", 3, 3));
                     	
-                    	if (data.length > 5)
-                    		 ent.setInteractionTrigger(Integer.parseInt(data[3]), Integer.parseInt(data[4]), Integer.parseInt(data[5]), Integer.parseInt(data[6]));
-                    	else ent.setInteractionTrigger(Integer.parseInt(data[3]), Integer.parseInt(data[4]), 0, 0);
+                    	if (data.length > 6)
+                    		 ent.setInteractionTrigger(Integer.parseInt(data[4]), Integer.parseInt(data[5]), Integer.parseInt(data[6]), Integer.parseInt(data[7]));
+                    	else ent.setInteractionTrigger(Integer.parseInt(data[4]), Integer.parseInt(data[5]), 0, 0);
                     	
                     	npcs.add(ent);
                     }    

@@ -1,6 +1,7 @@
 package com.lux;
 
 import com.lux.assets.AssetsManager;
+import com.lux.controls.DialogBox;
 import com.lux.entity.Entity;
 import com.lux.entity.Player;
 
@@ -160,6 +161,7 @@ public class Display {
     }
     
     public void moveCamera(Player player){
+    	// camera coordinates
         double x = player.getRequestedX()-root.getWidth()/2;
         double y = player.getRequestedY()-root.getHeight()/2;
         // Fix x coords
@@ -174,6 +176,7 @@ public class Display {
         player.setCameraPos(x, y);
         player.relocate(player.getRequestedX() - x, player.getRequestedY() - y);
         for (DynamicObject o : dynamicObjects) o.updatePos(-x, -y);
+        DialogBox.updatePos(this, 0, 0);
     }
     public double getCameraX() {
     	return camX;

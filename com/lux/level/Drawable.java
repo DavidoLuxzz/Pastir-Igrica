@@ -11,7 +11,7 @@ public class Drawable extends ImageView {
     private int layer;  // layer (greater layer value objects will be in front of lower layer value objects) try to keep value lower than 10
     private boolean solid; // drawable solid
     
-    public static final String[] TEXTURES  	    = {"block","stone","grass","water","plank","plank_on_water","cobweb","plum","door","door_open","room"};
+    public static final String[] TEXTURES  	    = {"block","stone","grass","water","plank","plank_on_water","cobweb","plum","fence","door","door_open","room","shade"};
     public static final int TEXTURE_BLOCK  	    = 0;
     public static final int TEXTURE_STONE  		= 1;
     public static final int TEXTURE_GRASS  		= 2;
@@ -20,10 +20,12 @@ public class Drawable extends ImageView {
     public static final int TEXTURE_PLANKW 		= 5;
     public static final int TEXTURE_COBWEB 		= 6;
     public static final int TEXTURE_PLUM   		= 7;
-    public static final int TEXTURE_DOOR   		= 8;
-    public static final int TEXTURE_DOOR_OPEN  	= 9;
-    public static final int TEXTURE_ROOM		= 10;
-    public static final int[]    SOLID_IDs  	= {0,3,7,8};
+    public static final int TEXTURE_FENCE		= 8;
+    public static final int TEXTURE_DOOR   		= 9;
+    public static final int TEXTURE_DOOR_OPEN  	= 10;
+    public static final int TEXTURE_ROOM		= 11;
+    public static final int TEXTURE_SHADE		= 12;
+    public static final int[]    SOLID_IDs  	= {0,3,7,8,9};
     
     public Drawable(int textureid, int group, int layer){
         super(AssetsManager.getImage(TEXTURES[textureid]+".png",4,4));
