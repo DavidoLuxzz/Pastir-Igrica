@@ -7,6 +7,8 @@ import com.lux.Event;
 import com.lux.Main;
 import com.lux.controls.TitleDisplayer;
 
+import javafx.scene.layout.Pane;
+
 public class Rooms extends ArrayList<ArrayList<Drawable>> implements DynamicObject {
 
 	private static final long serialVersionUID = 5358619610063430532L;
@@ -17,14 +19,22 @@ public class Rooms extends ArrayList<ArrayList<Drawable>> implements DynamicObje
 	private static ArrayList<Trigger> triggers;
 	private static ArrayList<Integer> tr_removedIndices;
 	
+	private int currentRoom;
+	
 	public static final int NUM_ROOMS = 5;
 	private int maxLayers = 1;
 	
-	private ArrayList<Layer> layers;
+	// koristi Pane umesto Group (veruj mi)
+	// loaded when loading,changing room
+	private Pane backLayer; // objects behind player
+	private Pane frontLayer; // objects in front of player
+	private ArrayList<Integer> heightenedObjects; // indices of objects with layer = Layer.HEIGHTENED
 	
 	public void updatePos(double x, double y) {
-		for (Layer layer : layers) {
-			layer.updatePos(x, y);
+		backLayer.relocate(x, y);
+		frontLayer.relocate(x, y);
+		for (int d : heightenedObjects) {
+			get(currentRoom).get(d).translate(x, y);
 		}
 	}
 
@@ -33,7 +43,9 @@ public class Rooms extends ArrayList<ArrayList<Drawable>> implements DynamicObje
 		groupedObjects = new ArrayList<>();
 		roomSizes = new ArrayList<>();
 		tr_removedIndices = new ArrayList<>();
-		layers = new ArrayList<Layer>();
+		backLayer = new Pane();
+		frontLayer = new Pane();
+		heightenedObjects = new ArrayList<Integer>();
 		areaNames = new String[NUM_ROOMS];
 	}
 	
@@ -44,9 +56,6 @@ public class Rooms extends ArrayList<ArrayList<Drawable>> implements DynamicObje
         	// numLayers = Integer.max(numLayers, lvlLoader.getNumLayers());
         	areaNames[i] = lvlLoader.getArea();
         }
-		for (int i=0; i<=maxLayers; i++) {
-			layers.add(new Layer(i));
-		}
 	}
 	
 	public void preexecuteTriggers(ArrayList<Integer> indices) {
@@ -98,14 +107,28 @@ public class Rooms extends ArrayList<ArrayList<Drawable>> implements DynamicObje
 	
 	// objects get sorted into layers when loading (changing) ROOM
 	public void loadRoom(int room) {
+		currentRoom = room;
 		// clear all layers
-		for (Layer layer : layers) {
-			layer.getChildren().clear();
-		}
-		// load all layers
+		backLayer.getChildren().clear();
+		frontLayer.getChildren().clear();
+		heightenedObjects.clear();
+		
+		// sorting into layers
 		for (Drawable d : getAllFromRoom(room)) {
-			layers.get(d.getLayer()).getChildren().add(d);
+			if (d.getLayer()<=Layer.BACK) backLayer.getChildren().add(d);
+			else if (d.getLayer()==Layer.HEIGHTENED) heightenedObjects.add(getAllFromRoom(room).indexOf(d));
+			else frontLayer.getChildren().add(d);
 		}
+		
+		// applying view order
+		backLayer.setViewOrder(0.0D); // constant for back layer
+		frontLayer.setViewOrder(-roomSizes.get(room)[1]*64);
+	}
+	
+	public void addCurrentRoomToRoot() {
+		Main.getDisplay().add(backLayer);
+		for (int i : heightenedObjects) Main.getDisplay().add(getAllFromRoom(currentRoom).get(i));
+		Main.getDisplay().add(frontLayer);
 	}
 	
     public ArrayList<Drawable> getObjectGroupWithID(int id) {
@@ -161,11 +184,14 @@ public class Rooms extends ArrayList<ArrayList<Drawable>> implements DynamicObje
     public ArrayList<Drawable> getAllFromRoom(int room){
     	return get(room);
     }
-    public Layer getLayer(int id) {
-		return layers.get(id);
+    public Pane getBackLayer() {
+		return backLayer;
 	}
-	public ArrayList<Layer> getLayers(){
-		return layers;
+    public Pane getFrontLayer() {
+		return frontLayer;
+	}
+	public ArrayList<Integer> getHeightenedObjects(){
+		return heightenedObjects;
 	}
 
 	@Override

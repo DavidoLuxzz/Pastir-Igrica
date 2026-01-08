@@ -155,7 +155,6 @@ public class Main extends Application {
                     break;
                 case V: // V kao view order
                 	System.out.println("Player view order: "+player.getViewOrder());
-                	System.out.println("Layer 2 view order: "+rooms.getLayer(2).getViewOrder());
                 	for (Entity e : entities.getAllFromRoom(roomID)) {
                 		System.out.println("Entity view order: "+e.getViewOrder());
                 	}
@@ -246,7 +245,7 @@ public class Main extends Application {
     	root.applyLevelDimensions(LEVEL_WIDTH, LEVEL_HEIGHT);
     }
     private static void drawObjects() {
-    	root.addAll(rooms.getLayers());
+    	rooms.addCurrentRoomToRoot();
     }
     
     public static void forceChangeRoom(int room){
@@ -289,7 +288,7 @@ public class Main extends Application {
         timer = new Timeline(new KeyFrame(Duration.millis(16.66666), (e) -> {
         	if (currentScene == SceneType.PLAY_SCREEN) {
 	            // main game timeline
-	            player.update(entities.getNodeGroup());
+	            player.update();
 	            player.configurateSpeed();
 	            rooms.checkTriggers();
 	            root.moveCamera(player);

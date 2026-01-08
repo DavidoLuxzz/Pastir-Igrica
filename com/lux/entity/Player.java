@@ -1,6 +1,7 @@
 package com.lux.entity;
 
 import com.lux.Item;
+import com.lux.Main;
 import com.lux.animation.Animation;
 import com.lux.assets.AssetsManager;
 import com.lux.controls.Inventory;
@@ -169,9 +170,9 @@ public class Player extends Sprite {
     	return direction;
     }
     
-    public void update(ArrayList<Entity> entities){
+    public void update(){
         if (!busy){ // can't move if in dialog
-            moveWithCollisionCheck(entities);
+            moveWithCollisionCheck();
             orientate();
             walk();
             updateDepth();
@@ -202,7 +203,7 @@ public class Player extends Sprite {
     public BoundingBox getRealExpandedHitbox() {
     	return new BoundingBox(getLayoutX(), getLayoutY()+getImage().getHeight()/3, getImage().getWidth(), 2*getImage().getHeight()/3);
     }
-    public void moveWithCollisionCheck(ArrayList<Entity> es){
+    public void moveWithCollisionCheck(){
         if (!chad){
         	double dx = (d-a)*speed*speedm;
             double dy = (s-w)*speed*speedm;
@@ -217,7 +218,7 @@ public class Player extends Sprite {
                     canMoveY = false;
                 }
             }
-            for (Entity e : es) {
+            for (Entity e : Main.getEntities().getNodeGroup()) {
             	if (e.getHitbox().intersects(getHitboxAt(reqx + dx, reqy))) canMoveX = false;
             	if (e.getHitbox().intersects(getHitboxAt(reqx, reqy + dy))) canMoveY = false;
             }
@@ -240,7 +241,7 @@ public class Player extends Sprite {
     }
     public void configurateSpeed(){
         for (Drawable c : cws){
-            if (c.getBoundsInParent().intersects(getHitbox())){
+            if (c.getBounds().intersects(getHitbox())){
                 setSpeed(2);
                 return;
             }

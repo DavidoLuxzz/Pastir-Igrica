@@ -55,6 +55,7 @@ public class Drawable extends ImageView {
     public static final int[]    SOLID_IDs  	= {TEXTURE_BLOCK, TEXTURE_WATER, TEXTURE_PLUM, TEXTURE_FENCE_FULL, TEXTURE_DOOR,
     											   TEXTURE_BLOCK_CORNER, TEXTURE_BLOCK_TOP, TEXTURE_BLOCK_TOPDOWN, TEXTURE_BLOCK_END,
     											   TEXTURE_BLACK, TEXTURE_FENCE_LEFT, TEXTURE_FENCE_RIGHT, TEXTURE_FENCE_NO_CONN};
+    // 0,7,8,9,13,14,15,16,18,19,20
     
     /**
      * Old constructor
@@ -93,7 +94,8 @@ public class Drawable extends ImageView {
         this.layer = layer;
         this.group  = group;
         this.solid = solid;
-        // solid = isSolid(textureid);
+        
+        
         
         setScaleX(scalex/100.0);
         setScaleY(scaley/100.0);
@@ -107,8 +109,18 @@ public class Drawable extends ImageView {
         setLayoutX(x);
         setLayoutY(y);
         // view order is defined in Layer object to which this belongs
-        setViewOrder(-y*100);
+        if (layer == Layer.HEIGHTENED) { // has custom height
+        	setViewOrder(-y-32); // 32 kao height/2
+        }
         // if (texture==TEXTURE_FENCE_FULL) System.out.println("view_order: "+getViewOrder()+", layer="+layer+", texture="+texture);
+    }
+    public void translate(double x, double y) {
+    	setTranslateX(x);
+    	setTranslateY(y);
+    	
+    	if (layer == Layer.HEIGHTENED) {
+        	setViewOrder(-(getLayoutY()-y+32)); // 32 kao height/2
+        }
     }
     
     public int getSpecial() {
@@ -118,8 +130,18 @@ public class Drawable extends ImageView {
     	return spec2;
     }
     
+    public static final double HEIGHTENED_HITBOX_Y_SCALE = 0.6;
     public Bounds getHitbox() {
-    	return getBoundsInParent();
+    	if (layer!=Layer.HEIGHTENED)
+    		return getBoundsInParent();
+    	double x = getLayoutX();
+    	double y = getLayoutY()+(1.0-HEIGHTENED_HITBOX_Y_SCALE)*getImage().getHeight();
+    	return createHitbox(x, y, getImage().getWidth(), getImage().getHeight()*HEIGHTENED_HITBOX_Y_SCALE);
+    }
+    public Bounds getBounds() {
+    	if (layer!=Layer.HEIGHTENED)
+    		return getBoundsInParent();
+    	return createHitbox(getLayoutX(), getLayoutY(), getImage().getWidth(), getImage().getHeight());
     }
     
     public double getMiniX(){
@@ -154,7 +176,7 @@ public class Drawable extends ImageView {
     public void setSolid(boolean s) {    solid = s;   }
     public boolean isSolid() 		{  return solid;  }
     
-    public static BoundingBox createHitbox(double x, double y, double w, double h){
-        return new BoundingBox(x, y, w, h);
+    public static BoundingBox createHitbox(double minx, double miny, double w, double h){
+        return new BoundingBox(minx, miny, w, h);
     }
 }
