@@ -7,48 +7,56 @@ import java.util.Scanner;
 
 public class LvlLoader {
     private ArrayList<int[]> l;
-    private ArrayList<int[]> t;
-    private ArrayList<int[]> gs; // ghosts
-    private ArrayList<int[]> ws; // wolves
-    private int gsCounter;
-    private int wsCounter;
+    private String area;
     private int maxw,maxh;
     public LvlLoader(){
-        t  = new ArrayList<>();
-        l  = new ArrayList<>();  
-        gs = new ArrayList<>();
-        ws = new ArrayList<>();
+        l  = new ArrayList<>();
     }
     public boolean successLoad(int stage){
         l.clear();
-        gs.clear();
-        gsCounter=0;
-        ws.clear();
-        wsCounter=0;
+        // default values (if not described in file)
+        area = "";
+        maxw = maxh = 0;
         try {
             File myObj = new File(stage+".txt");
             try (Scanner myReader = new Scanner(myObj)) {
                 while (myReader.hasNextLine()) {
-                    String[] data = myReader.nextLine().split(" ");
+                	String line = myReader.nextLine();
+                    String[] data = line.split(" ");
                     if (data.length!=0)
                         switch (data[0]) {
-                            case "g":
-                                gs.add(new int[]{Integer.parseInt(data[1]),Integer.parseInt(data[2])});
-                                gsCounter++;
-                                break;
-                            case "w":
-                                ws.add(new int[]{Integer.parseInt(data[1]),Integer.parseInt(data[2])});
-                                wsCounter++;
-                                break;
+                        	/**
+                        	 * Describes room dimensions
+                        	 */
                             case "box":
                             	maxw = Integer.parseInt(data[1]);
                             	maxh = Integer.parseInt(data[2]);
                                 break;
-                            case "":
-                            case "tr":  // triggers (loaded in other function)
-                                break;
-                            default:  // format:  [ textureID  interactionEventID  specialValue  x  y ]
-                                l.add(new int[]{Integer.parseInt(data[0]),Integer.parseInt(data[1]),Integer.parseInt(data[2]),Integer.parseInt(data[3]),Integer.parseInt(data[4])});
+                            /**
+                             * This command tells to which area does this room belong.
+                             * This command is of course case sensitive. ("valjevo"!="Valjevo")
+                             * TODO: Dodaj area teller
+                             * TODO: Dodaj prikazivac mape
+                             * Example: "area Valjevo" means that this room belongs to Valjevo
+                             */
+                            case "area":
+                            	area = line.substring(5);
+                            	while (area.startsWith(" ") && area.length()>0) {
+                            		area = area.substring(1);
+                            	}
+                            	while (area.endsWith(" ") && area.length()>0) {
+                            		area = area.substring(0, area.length()-1);
+                            	}
+                            	// System.out.println("Area: \""+area+"\"");
+                            	break;
+                            default:  // format:  [ textureID  x  y  solid  layer  group  angle  scalex%  scaley%  special  special2 ]
+                            	int[] obj = new int[Drawable.MAX_COMPONENTS];
+                                int index = 0;
+                                for (String comp : data) {
+                                	if (comp.length()<1) continue;
+                                	obj[index++] = Integer.parseInt(comp);
+                                }
+                                l.add(obj);
                                 break;
                         }
                 }
@@ -60,57 +68,16 @@ public class LvlLoader {
         }
         return false;
     }
-    public ArrayList<int[]> loadTriggers(){
-        t.clear();
-        _loadTriggers(0);
-        return t;
-    }
-    public void _loadTriggers(int zero){
-        try {
-            File myObj = new File(zero+".txt");
-            try (Scanner myReader = new Scanner(myObj)) {
-                while (myReader.hasNextLine()) {
-                    String[] data = myReader.nextLine().split(" ");
-                    if (data[0].equals("tr")){
-                        //           index:         0               1           2           3     4  5    6      7       8       9           10
-                        // triggers format:  [ interactionEventID  needsZ  specialValue  rmAfInt  x  y  width  height  room  (special2)  (special3) ]
-                        int speci2 = 0, speci3 = 0;
-                        if (data.length > 10) {
-                            speci2 = Integer.parseInt(data[9]);
-                            speci3 = Integer.parseInt(data[10]);
-                        }
-                        t.add(new int[]{Integer.parseInt(data[1]),Integer.parseInt(data[2]),Integer.parseInt(data[3]),Integer.parseInt(data[4]),
-                                        Integer.parseInt(data[5]),Integer.parseInt(data[6]),Integer.parseInt(data[7]),Integer.parseInt(data[8]), zero, speci2, speci3});
-                    }  
-                }
-                myReader.close();
-            }
-            _loadTriggers(zero+1);
-        } catch (FileNotFoundException __) {
-        }
-    }
     public ArrayList<int[]> getLevel(){
         return l;
+    }
+    public String getArea() {
+    	return area;
     }
     public int getMaxWidth(){
         return maxw;
     }
     public int getMaxHeight(){
         return maxh;
-    }
-    public ArrayList<int[]> getGhostArray(){
-        return gs;
-    }
-    public ArrayList<int[]> getWolfArray(){
-        return ws;
-    }
-    public int getGhostCounter(){
-        return gsCounter;
-    }
-    public int getWolfCounter(){
-        return wsCounter;
-    }
-    public ArrayList<int[]> getTriggers(){
-        return t;
     }
 }

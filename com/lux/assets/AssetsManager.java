@@ -3,8 +3,22 @@ package com.lux.assets;
 import javafx.scene.image.Image;
 import javafx.scene.media.Media;
 import javafx.scene.text.Font;
+import com.lux.level.Drawable;
 
 public class AssetsManager {
+	
+public static Image[] images;
+	
+	public static void loadImages(int scalex, int scaley) {
+		images = new Image[Drawable.TEXTURES.length];
+		int i = 0;
+		for (String name : Drawable.TEXTURES) {
+			images[i++] = getImage(name+".png", scalex, scaley);
+		}
+	}
+	public static Image getImage(int i) {
+		return images[i];
+	}
 	
 	public static Image[] ENTITY_IMAGES = null;
 	
@@ -12,6 +26,7 @@ public class AssetsManager {
 	public static final int ENTITY_IMAGE_NIKE_SHOES = 1;
 	
 	public static void loadEntityImages() {
+		System.out.println("Generating entity image list.");
 		if (ENTITY_IMAGES != null) {
 			System.err.println("Tried to regenerate entity image list.");
 			return;
@@ -31,7 +46,7 @@ public class AssetsManager {
             instance = new Image(AssetsManager.class.getResource("/assets/"+asset).toExternalForm());
             img = new Image(AssetsManager.class.getResource("/assets/"+asset).toExternalForm(), scalex*instance.getWidth(), scaley*instance.getHeight(), false, false);
         } catch (Exception e) {
-            System.err.println("ups");
+            System.err.println("ups: "+asset);
         }
         instance = null;
         return img;

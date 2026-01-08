@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 
-import com.lux.assets.AssetsManager;
 import com.lux.entity.Entities;
 import com.lux.entity.Entity;
 
@@ -12,7 +11,6 @@ public class NPCLoader {
 	
 	public static Entities load(){
 		Entities npcs = new Entities();
-		AssetsManager.loadEntityImages();
         try {
             File myObj = new File("ent.txt");
             try (Scanner myReader = new Scanner(myObj)) {

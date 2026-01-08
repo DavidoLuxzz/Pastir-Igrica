@@ -87,4 +87,13 @@ public class Entities extends ArrayList<Entity> implements DynamicObject {
 			e.updatePos(x, y);
 		}
 	}
+
+	@Override
+	public double getWorldX() {
+		return -Main.getDisplay().getCameraX();
+	}
+	@Override
+	public double getWorldY() {
+		return -Main.getDisplay().getCameraY();
+	}
 }

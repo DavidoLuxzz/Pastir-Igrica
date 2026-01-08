@@ -1,11 +1,13 @@
 package com.lux;
 
+import com.lux.assets.AssetsManager;
 import com.lux.controls.DialogBox;
 import com.lux.level.NPCLoader;
 import com.lux.level.Rooms;
 import com.lux.level.SaveManager;
 import com.lux.level.Trigger;
 import com.lux.controls.MusicPlayer;
+import com.lux.controls.TitleDisplayer;
 import com.lux.entity.Entities;
 import com.lux.entity.Entity;
 import com.lux.entity.Player;
@@ -32,6 +34,7 @@ public class Main extends Application {
     public static Player player;
     private static Timeline timer;
     public static int roomID;
+    public static String currentArea = "";
     // private SaveManager saveManager;
     
     private static Entities entities;
@@ -43,6 +46,10 @@ public class Main extends Application {
     @Override
     public void start(Stage stage) {     
         root = new Display();
+        
+        AssetsManager.loadEntityImages();
+        AssetsManager.loadImages(4,4);
+        
         initKeyboardEvents();
         initComponents();
         
@@ -78,6 +85,7 @@ public class Main extends Application {
         
         root.addAll(entities.getNodeGroup());
         DialogBox.addToRoot(root);
+        TitleDisplayer.addToRoot();
     }
     
     
@@ -96,7 +104,7 @@ public class Main extends Application {
     
     private static void initRooms() {
     	rooms.load();
-        rooms.updateNodeGroup(roomID);
+        rooms.loadRoom(roomID);
         //drawObjects();
         applyLevelDimensions();
         player.createCWOS(rooms.get(roomID));
@@ -144,6 +152,14 @@ public class Main extends Application {
                 case T:
                     DialogBox.setDialog(Dialog.DIALOG_0);
                     DialogBox.show();
+                    break;
+                case V: // V kao view order
+                	System.out.println("Player view order: "+player.getViewOrder());
+                	System.out.println("Layer 2 view order: "+rooms.getLayer(2).getViewOrder());
+                	for (Entity e : entities.getAllFromRoom(roomID)) {
+                		System.out.println("Entity view order: "+e.getViewOrder());
+                	}
+                	break;
                 case Z:
                 case ENTER:
                     if (DialogBox.isFinished() && player.isBusy()){
@@ -155,6 +171,9 @@ public class Main extends Application {
                     break;
                 case SHIFT:
                 case X:
+                	TitleDisplayer.setTextScale(1, 1.4);
+                	TitleDisplayer.setText(rooms.getArea(roomID));
+                	TitleDisplayer.show();
                     if (!player.isBusy()) {
                     	player.slash(); // will check first if has an ability to slash
             		} else if (!DialogBox.isFinished()){
@@ -218,6 +237,7 @@ public class Main extends Application {
         music = new MusicPlayer("project.mp3");
         rooms = new Rooms();
         DialogBox.init();
+        TitleDisplayer.init();
     }
     
     private static void applyLevelDimensions() {
@@ -226,13 +246,17 @@ public class Main extends Application {
     	root.applyLevelDimensions(LEVEL_WIDTH, LEVEL_HEIGHT);
     }
     private static void drawObjects() {
-    	root.add(rooms.getNodeGroup());
+    	root.addAll(rooms.getLayers());
     }
     
     public static void forceChangeRoom(int room){
         root.clear();
         roomID = room;
-        rooms.updateNodeGroup(room);
+        rooms.loadRoom(room);
+        if (rooms.getArea(room).length()>0 && !rooms.getArea(room).equals(currentArea)) {
+        	currentArea = rooms.getArea(room);
+        	rooms.showAreaName(room);
+        }
         player.updateCWOS(rooms.get(room));
         entities.applyRoom(room);
         addAllToRoot();

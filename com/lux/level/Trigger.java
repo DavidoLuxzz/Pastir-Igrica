@@ -91,16 +91,23 @@ public class Trigger {
     }
     
     public Trigger(int action, boolean needsZ, int special, boolean rmai, int x, int y, int w, int h){
-        this.action = action;
-        this.needsZ = needsZ;
-        this.special = special;
-        this.rmai = rmai;
-        this.x = x;
-        this.y = y;
-        this.width = w;
-        this.height = h;
+    	init(0, action, needsZ, special, rmai, x, y, w, h, 0, 0);
+    }
+    public Trigger(int room, int action, boolean needsZ, int special, boolean rmai, int x, int y, int w, int h){
+    	init(room, action, needsZ, special, rmai, x, y, w, h, 0, 0);
     }
     public Trigger(int action, boolean needsZ, int special, boolean rmai, int x, int y, int w, int h, int spec2, int spec3){
+    	init(0, action, needsZ, special, rmai, x, y, w, h, spec2, spec3);
+    }
+    public Trigger(int room, int action, boolean needsZ, int special, boolean rmai, int x, int y, int w, int h, int spec2, int spec3){
+    	init(room, action, needsZ, special, rmai, x, y, w, h, spec2, spec3);
+    }
+    public Trigger(int[] list, int room){
+        init(list, room);
+    }
+    
+    public void init(int room, int action, boolean needsZ, int special, boolean rmai, int x, int y, int w, int h, int spec2, int spec3) {
+    	this.room = room;
         this.action = action;
         this.needsZ = needsZ;
         this.special = special;
@@ -111,9 +118,6 @@ public class Trigger {
         this.height = h;
         this.special2 = spec2;
         this.special3 = spec3;
-    }
-    public Trigger(int[] list, int room){
-        init(list, room);
     }
     
     public void init(int[] list, int room) {

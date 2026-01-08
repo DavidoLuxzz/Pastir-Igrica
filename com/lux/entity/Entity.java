@@ -72,4 +72,12 @@ public class Entity extends Sprite implements DynamicObject {
 		setLayoutY(motherY + y);
 		updateDepth();
 	}
+	@Override
+	public double getWorldX() {
+		return getLayoutX()-Main.getDisplay().getCameraX();
+	}
+	@Override
+	public double getWorldY() {
+		return getLayoutY()-Main.getDisplay().getCameraY();
+	}
 }

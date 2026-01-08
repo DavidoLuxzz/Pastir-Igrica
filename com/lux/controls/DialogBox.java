@@ -65,7 +65,7 @@ public class DialogBox {
         currentIndex = 0;
         text.setText("");
         Main.getPlayer().setBusy(false);
-        System.out.println("hide");
+        // System.out.println("hide");
     }
     
     private static Timeline typingAnimation(String string, double millis){

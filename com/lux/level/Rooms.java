@@ -5,22 +5,27 @@ import java.util.ArrayList;
 import com.lux.DynamicObject;
 import com.lux.Event;
 import com.lux.Main;
-
-import javafx.scene.Group;
+import com.lux.controls.TitleDisplayer;
 
 public class Rooms extends ArrayList<ArrayList<Drawable>> implements DynamicObject {
 
 	private static final long serialVersionUID = 5358619610063430532L;
 	private LvlLoader lvlLoader;
 	private static ArrayList<Drawable> groupedObjects;
+	private static String[] areaNames;
 	private static ArrayList<int[]> roomSizes;
 	private static ArrayList<Trigger> triggers;
 	private static ArrayList<Integer> tr_removedIndices;
 	
-	private Group nodeGroup;
+	public static final int NUM_ROOMS = 5;
+	private int maxLayers = 1;
+	
+	private ArrayList<Layer> layers;
 	
 	public void updatePos(double x, double y) {
-		nodeGroup.relocate(x, y);
+		for (Layer layer : layers) {
+			layer.updatePos(x, y);
+		}
 	}
 
 	public Rooms() {
@@ -28,19 +33,26 @@ public class Rooms extends ArrayList<ArrayList<Drawable>> implements DynamicObje
 		groupedObjects = new ArrayList<>();
 		roomSizes = new ArrayList<>();
 		tr_removedIndices = new ArrayList<>();
-		nodeGroup = new Group();
+		layers = new ArrayList<Layer>();
+		areaNames = new String[NUM_ROOMS];
 	}
 	
 	public void load() {
-		for (int i=0; i<4; i++) {
-        	add(loadObjects(i));
+		for (int i=0; i<NUM_ROOMS; i++) {
+			// System.out.println("Room: "+i);
+        	add(loadObjects(i)); // loads all objects. does not sort them into layers
+        	// numLayers = Integer.max(numLayers, lvlLoader.getNumLayers());
+        	areaNames[i] = lvlLoader.getArea();
         }
+		for (int i=0; i<=maxLayers; i++) {
+			layers.add(new Layer(i));
+		}
 	}
 	
 	public void preexecuteTriggers(ArrayList<Integer> indices) {
     	for (int i : indices) {
     		Trigger tr = getTriggers().get(i);
-    		System.out.println("pre-Trigger: "+i+" action="+tr.getAction());
+    		// System.out.println("pre-Trigger: "+i+" action="+tr.getAction());
 	    	if (tr.getAction() != Event.TEXTURE_CHANGE) continue;
 	    	tr.execute(null);
     	}
@@ -73,8 +85,9 @@ public class Rooms extends ArrayList<ArrayList<Drawable>> implements DynamicObje
     	if (lvlLoader.successLoad(room)) {
     		roomSizes.add(new int[] {lvlLoader.getMaxWidth(), lvlLoader.getMaxHeight()});
     		for (int[] data : lvlLoader.getLevel()) {
-                Drawable drw = new Drawable(data[0],data[1],data[2]);
-                drw.relocate(data[3],data[4]);
+                Drawable drw = new Drawable(data);
+                maxLayers = Integer.max(maxLayers, drw.getLayer());
+                // drw.setManaged(false);
                 drawables.add(drw);
                 if (drw.getGroup()!=0)
                     groupedObjects.add(drw);
@@ -83,12 +96,16 @@ public class Rooms extends ArrayList<ArrayList<Drawable>> implements DynamicObje
     	return drawables;
     }
 	
-	public void updateNodeGroup(int room) {
-		nodeGroup.getChildren().clear();
-		nodeGroup.getChildren().addAll(get(room));
-	}
-	public Group getNodeGroup() {
-		return nodeGroup;
+	// objects get sorted into layers when loading (changing) ROOM
+	public void loadRoom(int room) {
+		// clear all layers
+		for (Layer layer : layers) {
+			layer.getChildren().clear();
+		}
+		// load all layers
+		for (Drawable d : getAllFromRoom(room)) {
+			layers.get(d.getLayer()).getChildren().add(d);
+		}
 	}
 	
     public ArrayList<Drawable> getObjectGroupWithID(int id) {
@@ -100,7 +117,7 @@ public class Rooms extends ArrayList<ArrayList<Drawable>> implements DynamicObje
     }
     
     public void loadTriggers() {
-    	triggers = Trigger.loadTriggerArray(lvlLoader.loadTriggers());
+    	triggers = TriggerLoader.load();
     }
     public static void loadRemovedTriggers(String removedTriggers) {
     	for (String numberButString : removedTriggers.split(" ")) {
@@ -132,4 +149,32 @@ public class Rooms extends ArrayList<ArrayList<Drawable>> implements DynamicObje
     public static ArrayList<int[]> getRoomSizes() {
     	return roomSizes;
     }
+    public String getArea(int room) {
+    	if (room<0 || room>=NUM_ROOMS) return "Pickovac";
+    	return areaNames[room];
+    }
+    public void showAreaName(int room) {
+    	TitleDisplayer.setText(getArea(room));
+    	TitleDisplayer.setTextScale(1.0, 1.4);
+    	TitleDisplayer.show();
+    }
+    public ArrayList<Drawable> getAllFromRoom(int room){
+    	return get(room);
+    }
+    public Layer getLayer(int id) {
+		return layers.get(id);
+	}
+	public ArrayList<Layer> getLayers(){
+		return layers;
+	}
+
+	@Override
+	public double getWorldX() {
+		return -Main.getDisplay().getCameraX();
+	}
+
+	@Override
+	public double getWorldY() {
+		return -Main.getDisplay().getCameraY();
+	}
 }
