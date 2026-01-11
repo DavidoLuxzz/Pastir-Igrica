@@ -1,0 +1,15 @@
+# triggers format:  [ room  action  needsZ  specialValue  rmAfInt  x  y  width  height  (special2)  (special3) ]
+# change room: (spec2,spec3) = (spawnx, spawny)
+# room 0:
+0 3 1 1 1 188 128 72 132 10 0
+0 1 0 1 0 200 128 48 72 70 70
+0 1 0 1 0 1172 64 16 128 70 70
+0 2 1 1 0 64 576 64 64
+# room 1:
+1 1 0 0 0 32 64 16 128 1100 70
+1 1 0 2 0 1100 128 1152 128 70 70
+# room 2:
+2 1 0 3 0 960 64 32 128 70 70
+# room 3:
+3 2 0 0 1 320 1024 64 64
+3 1 0 0 0 576 512 64 32 70 70
