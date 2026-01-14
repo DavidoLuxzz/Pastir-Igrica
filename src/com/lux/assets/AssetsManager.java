@@ -1,14 +1,13 @@
 package com.lux.assets;
 
+import com.lux.level.Drawable;
 import javafx.scene.image.Image;
 import javafx.scene.media.Media;
 import javafx.scene.text.Font;
 
-import com.lux.level.Drawable;
-
 public class AssetsManager {
 	
-	public static String ASSETS_DIRECTORY = "file:/Users/luka/eclipse-workspace/Sheep/assets/";
+	public static String ASSETS_DIRECTORY = "file:/Users/r/eclipse-workspace/Pastir-igrica/assets/";
 	
 	public static void init() {}
 	

@@ -2,18 +2,16 @@ package com.lux;
 
 import com.lux.assets.AssetsManager;
 import com.lux.controls.DialogBox;
+import com.lux.controls.TitleDisplayer;
+import com.lux.controls.audio.AudioPlayer;
+import com.lux.entity.Entities;
+import com.lux.entity.Entity;
+import com.lux.entity.Player;
 import com.lux.level.NPCLoader;
 import com.lux.level.Rooms;
 import com.lux.level.SaveManager;
 import com.lux.level.Trigger;
-import com.lux.controls.audio.AudioPlayer;
-import com.lux.controls.TitleDisplayer;
-import com.lux.entity.Entities;
-import com.lux.entity.Entity;
-import com.lux.entity.Player;
-
 import java.util.ArrayList;
-
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
