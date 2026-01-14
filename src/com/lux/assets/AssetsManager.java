@@ -7,7 +7,7 @@ import javafx.scene.text.Font;
 
 public class AssetsManager {
 	
-	public static String ASSETS_DIRECTORY = "file:/Users/r/eclipse-workspace/Pastir-igrica/assets/";
+	public static String ASSETS_DIRECTORY = "file:"+System.getProperty("user.home")+"/eclipse-workspace/Pastir-igrica/assets/";
 	
 	public static void init() {}
 	
