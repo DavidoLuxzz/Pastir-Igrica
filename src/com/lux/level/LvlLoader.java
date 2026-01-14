@@ -35,7 +35,6 @@ public class LvlLoader {
                             /**
                              * This command tells to which area does this room belong.
                              * This command is of course case sensitive. ("valjevo"!="Valjevo")
-                             * TODO: Dodaj area teller
                              * TODO: Dodaj prikazivac mape
                              * Example: "area Valjevo" means that this room belongs to Valjevo
                              */

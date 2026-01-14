@@ -5,9 +5,10 @@ import javafx.scene.media.AudioClip;
 
 public class Sound implements Audio {
 	
-	public static final String[] SOUND_NAMES = {"walk_on_grass0.mp3"};
+	public static final String[] SOUND_NAMES = {"walk_on_grass0.mp3","voice1.wav"};
 	
 	public static final int WALK_ON_GRASS0 = 0;
+    public static final int VOICE1 = 1;
 	
 	
     private AudioClip player;
@@ -23,7 +24,11 @@ public class Sound implements Audio {
     @Override
     public void play(){
         player.play();
-        player.setVolume(1.0D);
+    }
+    @Override
+    public void play(boolean loop){
+        setLoop(loop);
+        player.play();
     }
     @Override
     public void stop(){
@@ -47,4 +52,10 @@ public class Sound implements Audio {
 	public double getVolume() {
 		return player.getVolume();
 	}
+    public boolean isPlaying() {
+        return player.isPlaying();
+    }
+    public AudioClip getPlayer() {
+        return player;
+    }
 }

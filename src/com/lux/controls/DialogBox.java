@@ -3,6 +3,9 @@ package com.lux.controls;
 import com.lux.Display;
 import com.lux.Main;
 import com.lux.assets.AssetsManager;
+import com.lux.controls.audio.AudioPlayer;
+import com.lux.controls.audio.Sound;
+
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.scene.image.ImageView;
@@ -58,6 +61,7 @@ public class DialogBox {
         currentIndex = 0;
         typingAnimation(currentDialog[currentIndex], 40).play();
         Main.getPlayer().setBusy(true);
+        // AudioPlayer.playSound(Sound.VOICE1, true);
     }
     public static void hide(){
     	boxView.setVisible(false);
@@ -74,13 +78,16 @@ public class DialogBox {
         textAnimFinished = false;
         anim = new Timeline(new KeyFrame(Duration.millis(millis), (e) -> {
         	if (string.length()<1) return;
-        	if (string.charAt(currentCharacterID) != 'ƒ')
-        		text.textProperty().set(text.textProperty().get() + string.charAt(currentCharacterID));
+        	if (string.charAt(currentCharacterID) != 'ƒ'){
+        		text.setText(text.getText() + string.charAt(currentCharacterID));
+                AudioPlayer.playSound(Sound.VOICE1);
+            }
     		currentCharacterID++;
         }));
         anim.setCycleCount(string.length());
         anim.setOnFinished((e) -> {
             textAnimFinished = true;
+            AudioPlayer.stopSound(Sound.VOICE1);
         });
         return anim;
     }

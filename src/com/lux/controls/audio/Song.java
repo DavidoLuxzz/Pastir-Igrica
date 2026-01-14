@@ -38,6 +38,11 @@ public class Song implements Audio {
         player.play();
     }
     @Override
+    public void play(boolean loop){
+        setLoop(loop);
+        player.play();
+    }
+    @Override
     public void stop(){
         player.stop();
         seek(0);
@@ -82,4 +87,10 @@ public class Song implements Audio {
 	public double getVolume() {
 		return player.getVolume();
 	}
+    public boolean isPlaying() {
+        return player.getStatus() == MediaPlayer.Status.PLAYING;
+    }
+    public MediaPlayer getPlayer() {
+        return player;
+    }
 }

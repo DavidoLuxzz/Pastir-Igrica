@@ -39,6 +39,10 @@ public class AudioPlayer {
 	public static void playSong(int songID) {
 		getSong(songID).play();
 	}
+	public static void playSong(int songID, boolean loop) {
+		getSong(songID).setLoop(loop);
+		getSong(songID).play();
+	}
 	public static void switchSong(int songID) {
 		stopAllSongs();
 		playSong(songID);
@@ -57,6 +61,9 @@ public class AudioPlayer {
 	}
 	public static void playSound(int soundID) {
 		getSound(soundID).play();
+	}
+	public static void playSound(int soundID, boolean loop) {
+		getSound(soundID).play(loop);
 	}
 	public static void switchSound(int soundID) {
 		stopAllSounds();

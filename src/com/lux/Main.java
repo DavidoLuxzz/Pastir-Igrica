@@ -45,6 +45,7 @@ public class Main extends Application {
     
     @Override
     public void start(Stage stage) {
+        System.out.println("Starting game...");
     	AssetsManager.init();
     	
         root = new Display();

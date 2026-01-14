@@ -3,6 +3,7 @@ package com.lux.controls.audio;
 public interface Audio {
 	
 	public void play();
+    public void play(boolean loop);
     public void stop();
     
     public void setVolume(double v);
