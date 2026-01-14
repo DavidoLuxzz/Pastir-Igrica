@@ -1,7 +1,7 @@
 package com.lux.controls;
 
-import com.lux.Main;
 import com.lux.Display;
+import com.lux.Main;
 import com.lux.assets.AssetsManager;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;

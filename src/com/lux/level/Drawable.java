@@ -29,8 +29,10 @@ public class Drawable extends ImageView {
     public static final int COMP_SPECIAL = 9;
     public static final int COMP_SPECIAL2 = 10;
     
-    public static final String[] TEXTURES = {"block","stone","grass","water","plank","plank_on_water","cobweb","plum","fence_full","door","door_open",
-			 "room","shade","block_corner","block_top","block_topdown","block_end","black","fence_left","fence_right","fence_no_conn"};
+    public static final String[] TEXTURES = {
+        "block","stone","grass","water","plank","plank_on_water","cobweb","plum","fence_full",
+        "door","door_open","room","shade","block_corner","block_top","block_topdown","block_end",
+        "black","fence_left","fence_right","fence_no_conn"};
     public static final int TEXTURE_BLOCK  	    = 0;
     public static final int TEXTURE_STONE  		= 1;
     public static final int TEXTURE_GRASS  		= 2;
@@ -78,7 +80,7 @@ public class Drawable extends ImageView {
     
     /**
      * Preferred constructor
-     * @param data
+     * @param data array in format defined at the top of the class
      */
     public Drawable(int[] data) {
     	super(AssetsManager.getImage(data[COMP_TEXTURE_ID]));
@@ -89,7 +91,7 @@ public class Drawable extends ImageView {
     }
     
     // from level editor
-    public void init(int textureid, int group, int layer, boolean solid, int angle, int scalex, int scaley){
+    private void init(int textureid, int group, int layer, boolean solid, int angle, int scalex, int scaley){
         this.texture = textureid;
         this.layer = layer;
         this.group  = group;
@@ -143,28 +145,28 @@ public class Drawable extends ImageView {
      */
     private Bounds getCustomHitboxForThisTexture(double HEIGHTENED_HITBOX_Y_SCALE, double HEIGHTENED_FENCE_Y_SCALE) {
     	switch (texture) {
-    	case TEXTURE_FENCE_LEFT:{
+    	case TEXTURE_FENCE_LEFT -> {
     		double x = getLayoutX();
         	double y = getLayoutY()+(1.0-HEIGHTENED_FENCE_Y_SCALE)*getImage().getHeight();
         	return createHitbox(x, y, getImage().getWidth()*HEIGHTENED_FENCE_X_SCALE, getImage().getHeight()*HEIGHTENED_FENCE_Y_SCALE);
     	}
-    	case TEXTURE_FENCE_RIGHT:{
+    	case TEXTURE_FENCE_RIGHT -> {
     		double x = getLayoutX()+(1.0-HEIGHTENED_FENCE_X_SCALE)*getImage().getWidth();
         	double y = getLayoutY()+(1.0-HEIGHTENED_FENCE_Y_SCALE)*getImage().getHeight();
         	return createHitbox(x, y, getImage().getWidth()*HEIGHTENED_FENCE_X_SCALE, getImage().getHeight()*HEIGHTENED_FENCE_Y_SCALE);
     	}
-    	case TEXTURE_FENCE_NO_CONN:{
+    	case TEXTURE_FENCE_NO_CONN -> {
     		double dx = (1.0-HEIGHTENED_FENCE_X_SCALE)*getImage().getWidth();
     		double x = getLayoutX()+dx;
         	double y = getLayoutY()+(1.0-HEIGHTENED_FENCE_Y_SCALE)*getImage().getHeight();
         	return createHitbox(x, y, getImage().getWidth()-(2*dx), getImage().getHeight()*HEIGHTENED_FENCE_Y_SCALE);
     	}
-    	case TEXTURE_FENCE_FULL:{
+    	case TEXTURE_FENCE_FULL -> {
     		double x = getLayoutX();
         	double y = getLayoutY()+(1.0-HEIGHTENED_FENCE_Y_SCALE)*getImage().getHeight();
         	return createHitbox(x, y, getImage().getWidth(), getImage().getHeight()*HEIGHTENED_FENCE_Y_SCALE);
     	}
-		default:{
+		default -> {
 			double x = getLayoutX();
 	    	double y = getLayoutY()+(1.0-HEIGHTENED_HITBOX_Y_SCALE)*getImage().getHeight();
 	    	return createHitbox(x, y, getImage().getWidth(), getImage().getHeight()*HEIGHTENED_HITBOX_Y_SCALE);

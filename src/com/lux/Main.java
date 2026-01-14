@@ -21,13 +21,6 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 
 
-/**
- * TODO:	+ dodaj bolji audio library
- * 			
- */
-
-
-
 public class Main extends Application {
     public static Rooms rooms; // all possible rooms stored in one list
 
@@ -136,105 +129,67 @@ public class Main extends Application {
     
     private static void initKeyboardEvents(){
         root.getScene().setOnKeyPressed((evt) -> {
-            if (evt.getCode()!=null)switch(evt.getCode()){
-                case ESCAPE:
+            if (evt.getCode()!=null) switch (evt.getCode()) {
+                case ESCAPE -> {
                     timer.stop();
                     AudioPlayer.stopAll();
                     System.out.println("See you soon! :)");
                     System.exit(0);
-                    break;
-                case UP:
-                case W:
-                    player.up(1);
-                    break;
-                case DOWN:
-                case S:
-                    player.down(1);
-                    break;
-                case LEFT:
-                case A:
-                    player.left(1);
-                    break;
-                case RIGHT:
-                case D:
-                    player.right(1);
-                    break;
-                case T:
+                }
+                case UP, W -> player.up(1);
+                case DOWN, S -> player.down(1);
+                case LEFT, A -> player.left(1);
+                case RIGHT, D -> player.right(1);
+                case T -> {
                     DialogBox.setDialog(Dialog.DIALOG_0);
                     DialogBox.show();
-                    break;
-                case V: // V kao view order
-                	System.out.println("Player view order: "+player.getViewOrder());
-                	for (Entity e : entities.getAllFromRoom(roomID)) {
-                		System.out.println("Entity view order: "+e.getViewOrder());
-                	}
-                	break;
-                case Z:
-                case ENTER:
+                }
+                case V -> {
+                    System.out.println("Player view order: "+player.getViewOrder());
+                    for (Entity e : entities.getAllFromRoom(roomID)) {
+                        System.out.println("Entity view order: "+e.getViewOrder());
+                    }
+                }
+                case Z, ENTER -> {
                     if (DialogBox.isFinished() && player.isBusy()){
                         DialogBox.sendCloseRequest();
                     } else {
                         zDown = true;
                         checkEntityInteractions();
                     }
-                    break;
-                case SHIFT:
-                case X:
+                }
+                case SHIFT, X -> {
                     if (!player.isBusy()) {
-                    	player.slash(); // will check first if has an ability to slash
-            		} else if (!DialogBox.isFinished()){
+                        player.slash();
+                    } else if (!DialogBox.isFinished()){
                         DialogBox.sendSkipRequest();
                     }
-                    break;
-                case C:
-                	if (!player.isBusy() && player.inventory.contains(Item.NIKE_SHOES))
-                		player.setSpeedMultiplier(Player.SPRINT_MULTIPLIER);
-                	break;
-                case TAB:
-                	if (!player.isBusy()) SaveManager.save();
-                	break;
-                case I:
-                	if (!player.isBusy()) player.inventory.showInventory();
-                	break;
-                case P:
-                	System.out.println("----------------------------------");
-                	for (Trigger t : rooms.getTriggers()) {
-                		if (rooms.isTriggerRemoved(t)) System.out.print("(removed)");
-                    	System.out.println("Trigger: room: "+t.getRoom()+", action: " + t.getAction()+ ", x: "+t.getX()+", y: "+t.getY());
+                }
+                case C -> {
+                    if (!player.isBusy() && player.inventory.contains(Item.NIKE_SHOES))
+                        player.setSpeedMultiplier(Player.SPRINT_MULTIPLIER);
+                }
+                case TAB -> { if (!player.isBusy()) SaveManager.save(); }
+                case I -> { if (!player.isBusy()) player.inventory.showInventory(); }
+                case P -> {
+                    System.out.println("----------------------------------");
+                    for (Trigger t : rooms.getTriggers()) {
+                        if (rooms.isTriggerRemoved(t)) System.out.print("(removed)");
+                        System.out.println("Trigger: room: "+t.getRoom()+", action: " + t.getAction()+ ", x: "+t.getX()+", y: "+t.getY());
                     }
-                	break;
-                default:
-                    break;
+                }
+                default -> {}
             }
         });
         root.getScene().setOnKeyReleased((evt) -> {
-            if (evt.getCode()!=null)switch(evt.getCode()){
-                case UP:
-                case W:
-                    player.up(0);
-                    break;
-                case DOWN:
-                case S:
-                    player.down(0);
-                    break;
-                case LEFT:
-                case A:
-                    player.left(0);
-                    break;
-                case RIGHT:
-                case D:
-                    player.right(0);
-                    break;
-                case Z:
-                case ENTER:
-                    zDown = false;
-                    break;
-                case SHIFT:
-                case C:
-                    player.setSpeedMultiplier(1.0);
-                    break;
-                default:
-                    break;
+            if (evt.getCode()!=null) switch (evt.getCode()) {
+                case UP, W -> player.up(0);
+                case DOWN, S -> player.down(0);
+                case LEFT, A -> player.left(0);
+                case RIGHT, D -> player.right(0);
+                case Z, ENTER -> zDown = false;
+                case SHIFT, C -> player.setSpeedMultiplier(1.0);
+                default -> {}
             }
         });
     }
