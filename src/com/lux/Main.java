@@ -248,18 +248,21 @@ public class Main extends Application {
     }
     // try to avoid drawable triggers,  use normal invisible triggers instead and add drawable a group
     
-    private static void gameLoop(){
+    private static void gameLoop() {
         timer = new Timeline(new KeyFrame(Duration.millis(16.66666), (e) -> {
-        	if (currentScene == SceneType.PLAY_SCREEN) {
-	            // main game timeline
-	            player.update();
-	            player.configurateSpeed();
-	            rooms.checkTriggers();
-	            root.moveCamera(player);
-	            
-	            root.update();
-	            //updateStatic();
-        	}
+            switch(currentScene) {
+                case PLAY_SCREEN-> {
+                    // main game timeline
+                    player.update();
+                    player.configurateSpeed();
+                    rooms.checkTriggers();
+                    root.moveCamera(player);
+                    
+                    root.update();
+                    //updateStatic();
+                }
+                default -> {}
+            }
         }));
         timer.setCycleCount(-1);
         timer.play();
