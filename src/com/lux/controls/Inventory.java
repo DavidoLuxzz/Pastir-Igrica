@@ -1,6 +1,8 @@
 package com.lux.controls;
 
 import com.lux.Item;
+import com.lux.entity.Player;
+
 import java.util.ArrayList;
 
 // Prevod: Ranac
@@ -8,8 +10,21 @@ public class Inventory extends ArrayList<Integer> {
 
 	private static final long serialVersionUID = 1L;
 
+	private Player owner;
+
 	public Inventory() {
 		super();
+	}
+	public Inventory(Player owner) {
+		super();
+		setOwner(owner);
+	}
+
+	public void setOwner(Player player) {
+		this.owner = player;
+	}
+	public Player getOwner() {
+		return owner;
 	}
 	
 	private String[] createGetDialog(int item) {
@@ -24,6 +39,9 @@ public class Inventory extends ArrayList<Integer> {
 	
 	public void addWithDialog(int item) {
 		add(item);
+		if (owner != null && item == Item.NIKE_SHOES) {
+			owner.equipNikeShoes();
+		}
 		DialogBox.setDialog(createGetDialog(item));
     	DialogBox.show();
 	}

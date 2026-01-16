@@ -44,7 +44,7 @@ public class Player extends Sprite {
     	super(AssetsManager.getImage("player/w0.png",2,2));
         cos = new ArrayList<>();
         cws = new ArrayList<>();
-        inventory = new Inventory();
+        inventory = new Inventory(this);
         loadPlayerTiles(false);
         initWalkAnimation();
         loadSlashAnimation();
@@ -54,7 +54,7 @@ public class Player extends Sprite {
         super(AssetsManager.getImage("player/w0.png",2,2));
         cos = new ArrayList<>();
         cws = new ArrayList<>();
-        inventory = new Inventory();
+        inventory = new Inventory(this);
         createCWOS(objects);
         loadPlayerTiles(false);
         initWalkAnimation();
@@ -85,6 +85,11 @@ public class Player extends Sprite {
                 tiles[dir*4 + i] = AssetsManager.getImage((withNikes?"player_w_nike/":"player/")+"wsad".charAt(dir)+i+".png", 2, 2);
             }
         }
+    }
+
+    public void equipNikeShoes() {
+    	loadPlayerTiles(true);
+        setImage(tiles[4*direction]);
     }
     
     public void createCWOS(ArrayList<Drawable> objects){

@@ -4,6 +4,7 @@ import com.lux.assets.AssetsManager;
 import com.lux.controls.DialogBox;
 import com.lux.controls.TitleDisplayer;
 import com.lux.controls.audio.AudioPlayer;
+import com.lux.controls.audio.Song;
 import com.lux.entity.Entities;
 import com.lux.entity.Entity;
 import com.lux.entity.Player;
@@ -99,7 +100,7 @@ public class Main extends Application {
         	roomID = saveData[0];
         	player.reqRelocate(saveData[1], saveData[2]);
         	if (player.getInventory().contains(Item.NIKE_SHOES))
-        		player.loadPlayerTiles(true);
+        		player.equipNikeShoes();
         	entities.removeRemovable();
         }
         return saveData;
