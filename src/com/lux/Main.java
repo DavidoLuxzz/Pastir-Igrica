@@ -49,7 +49,7 @@ public class Main extends Application {
         System.out.println("Starting game...");
     	AssetsManager.init();
     	
-        root = new Display(1024, 768);
+        root = new Display();
         
         AssetsManager.loadEntityImages();
         AssetsManager.loadImages(4,4);
@@ -100,8 +100,6 @@ public class Main extends Application {
         	System.out.println("Save data avaiable!");
         	roomID = saveData[0];
         	player.reqRelocate(saveData[1], saveData[2]);
-        	if (player.getInventory().contains(Item.NIKE_SHOES))
-        		player.equipNikeShoes();
         	entities.removeRemovable();
         }
         return saveData;
@@ -136,7 +134,6 @@ public class Main extends Application {
                 case ESCAPE -> {
                     timer.stop();
                     AudioPlayer.stopAll();
-                    System.out.println("See you soon! :)");
                     System.exit(0);
                 }
                 case UP, W -> player.up(1);

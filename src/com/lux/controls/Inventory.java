@@ -39,11 +39,16 @@ public class Inventory extends ArrayList<Integer> {
 	
 	public void addWithDialog(int item) {
 		add(item);
-		if (owner != null && item == Item.NIKE_SHOES) {
-			owner.equipNikeShoes();
-		}
 		DialogBox.setDialog(createGetDialog(item));
     	DialogBox.show();
+	}
+
+	@Override
+	public boolean add(Integer i){
+		if (owner != null && i == Item.NIKE_SHOES){
+			owner.equipNikeShoes();
+		}
+		return super.add(i);
 	}
 	
 	private String[] createOpenDialog() {
