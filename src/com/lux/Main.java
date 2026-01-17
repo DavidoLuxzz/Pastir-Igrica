@@ -49,7 +49,7 @@ public class Main extends Application {
         System.out.println("Starting game...");
     	AssetsManager.init();
     	
-        root = new Display();
+        root = new Display(1024, 768);
         
         AssetsManager.loadEntityImages();
         AssetsManager.loadImages(4,4);

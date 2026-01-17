@@ -12,15 +12,20 @@ import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
 
 public class Display {
     private Pane root;
     private Scene scene;
     private Stage stage;
+
+    private Scale contentScale;
     
     private ImageView staticBlur;
     private Rectangle opacityEffect;
@@ -29,24 +34,27 @@ public class Display {
     private int fadeDuration;
     private double fadeStart, fadeEnd;
     private EventHandler<?> fadeOnFinish;
-    public final int DEFAULT_WIDTH  = 1024;
-    public final int DEFAULT_HEIGHT = 768;
+    public static final int DEFAULT_WIDTH  = 1024;
+    public static final int DEFAULT_HEIGHT = 768;
     
     private int LEVEL_WIDTH, LEVEL_HEIGHT;
     
     private double camX, camY;
     
     private ArrayList<DynamicObject> dynamicObjects;
-    
+
     public Display(){
+        this(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+    }
+
+    public Display(int width, int height){
         root = new Pane();
-        root.setStyle("-fx-background-color: black");
-        scene = new Scene(root, 1024, 768, Color.BLACK);
+        root.setBackground(new Background(new BackgroundFill(null, null, null)));
+        scene = new Scene(root, width, height, Color.BLACK);
         staticBlur = new ImageView(AssetsManager.getImage("static.gif",2.0D,2.0D));
         staticBlur.setOpacity(0);
         opacityEffect = new Rectangle(0, 0, 1056, 800);
-        
-        opacityEffect.setOpacity(0);     
+        opacityEffect.setOpacity(0);
         
         staticBlur.setViewOrder(-9998); 	// put in front
         opacityEffect.setViewOrder(-9999);  //   - || -
@@ -63,6 +71,7 @@ public class Display {
     public void setStage(Stage stage){
         this.stage = stage;
         stage.setScene(scene);
+        stage.setRenderScaleX(2.0);
     }
     
     public boolean contains(Node n){

@@ -92,12 +92,11 @@ public class Drawable extends ImageView {
     
     // from level editor
     private void init(int textureid, int group, int layer, boolean solid, int angle, int scalex, int scaley){
+        setSmooth(false);
         this.texture = textureid;
         this.layer = layer;
         this.group  = group;
         this.solid = solid;
-        
-        
         
         setScaleX(scalex/100.0);
         setScaleY(scaley/100.0);
