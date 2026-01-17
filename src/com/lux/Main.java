@@ -30,7 +30,7 @@ public class Main extends Application {
     
     public static boolean zDown;
     
-    // use static AudioPlayer.play(AudioPlayer.AUDIO_NAME)
+    // use static AudioPlayer.play<Song/Sound>(AudioPlayer.AUDIO_NAME)
     // private static AudioPlayer audio;
     public static Player player;
     private static Timeline timer;
@@ -72,7 +72,8 @@ public class Main extends Application {
         
         forceChangeRoom(roomID);
         
-        // AudioPlayer.playSong(Song.BOZIC_JE);
+        AudioPlayer.getSong(Song.BOZIC_JE).setVolume(0.0);
+        AudioPlayer.playSong(Song.BOZIC_JE);
         gameLoop();
         
         stage.setTitle(Game.getTitle());
