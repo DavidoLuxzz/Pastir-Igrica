@@ -73,7 +73,7 @@ public class Main extends Application {
         
         forceChangeRoom(roomID);
         
-        AudioPlayer.getSong(Song.BOZIC_JE).setVolume(0.0);
+        // AudioPlayer.getSong(Song.BOZIC_JE).setVolume(0.0);
         AudioPlayer.playSong(Song.BOZIC_JE);
         gameLoop();
         
