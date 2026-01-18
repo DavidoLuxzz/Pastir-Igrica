@@ -32,42 +32,52 @@ public class Drawable extends ImageView {
     public static final String[] TEXTURES = {
         "block","stone", "grass","water", "plank","plank_on_water", "cobweb","plum","fence_full",
         "door","door_open","room","shade","block_corner","block_top","block_topdown","block_end",
-        "black", "fence_left","fence_right","fence_no_conn", "grass0","grass1","grass2","grass3",
-        "grass4","grass5", "grass6","grass7", "grass8","grass9", "grass10", "grass11", "grass12",
-        "grass13", "grass14", "grass15", "dirt0","dirt1","cobble0","cobble1","cobble2","cobble3",
-        "cobble4","cobble5","cobble6","cobble7"
+        "black","fence_left","fence_right","fence_no_conn","line_corner","line_top","line_sides",
+        "line_end", "fasada", "grass0", "grass1","grass2", "grass3","grass4", "grass5", "grass6",
+        "grass7","grass8","grass9", "grass10","grass11","grass12", "grass13","grass14","grass15",
+        "dirt0","dirt1", "cobble0","cobble1","cobble2", "cobble3","cobble4", "cobble5","cobble6",
+        "cobble7"
     };
-    public static final int TEXTURE_BLOCK  	    = 0;
-    public static final int TEXTURE_STONE  		= 1;
-    public static final int TEXTURE_GRASS  		= 2;
-    public static final int TEXTURE_WATER  		= 3;
-    public static final int TEXTURE_PLANK  		= 4;
-    public static final int TEXTURE_PLANKW 		= 5;
-    public static final int TEXTURE_COBWEB 		= 6;
-    public static final int TEXTURE_PLUM   		= 7;
-    public static final int TEXTURE_FENCE_FULL	= 8;
-    public static final int TEXTURE_DOOR   		= 9;
-    public static final int TEXTURE_DOOR_OPEN  	= 10;
-    public static final int TEXTURE_ROOM		= 11;
-    public static final int TEXTURE_SHADE		= 12;
-    public static final int TEXTURE_BLOCK_CORNER= 13;
-    public static final int TEXTURE_BLOCK_TOP	= 14;
-    public static final int TEXTURE_BLOCK_TOPDOWN=15;
-    public static final int TEXTURE_BLOCK_END   = 16;
-    public static final int TEXTURE_BLACK       = 17;
-    public static final int TEXTURE_FENCE_LEFT	= 18;
-    public static final int TEXTURE_FENCE_RIGHT	= 19;
-    public static final int TEXTURE_FENCE_NO_CONN=20;
-    public static final int TEXTURE_GRASSX      = 21;
-    public static final int GRASS_TEXTURE_COUNT = 16;
-    public static final int TEXTURE_DIRT0       = 37;
-    public static final int TEXTURE_DIRT1       = 38;
-    public static final int TEXTURE_COBBLEX     = 39;
-    public static final int COBBLE_TEXTURE_COUNT= 8;
-    public static final int[]    SOLID_IDs  	= {TEXTURE_BLOCK, TEXTURE_WATER, TEXTURE_PLUM, TEXTURE_FENCE_FULL, TEXTURE_DOOR,
-    											   TEXTURE_BLOCK_CORNER, TEXTURE_BLOCK_TOP, TEXTURE_BLOCK_TOPDOWN, TEXTURE_BLOCK_END,
-    											   TEXTURE_BLACK, TEXTURE_FENCE_LEFT, TEXTURE_FENCE_RIGHT, TEXTURE_FENCE_NO_CONN};
-    // 0,7,8,9,13,14,15,16,18,19,20
+    public static final int TEXTURE_BLOCK  	        = 0;
+    public static final int TEXTURE_STONE  		    = 1;
+    public static final int TEXTURE_GRASS  		    = 2;
+    public static final int TEXTURE_WATER  		    = 3;
+    public static final int TEXTURE_PLANK  		    = 4;
+    public static final int TEXTURE_PLANKW 		    = 5;
+    public static final int TEXTURE_COBWEB 		    = 6;
+    public static final int TEXTURE_PLUM   		    = 7;
+    public static final int TEXTURE_FENCE_FULL	    = 8;
+    public static final int TEXTURE_DOOR   		    = 9;
+    public static final int TEXTURE_DOOR_OPEN  	    = 10;
+    public static final int TEXTURE_ROOM		    = 11;
+    public static final int TEXTURE_SHADE		    = 12;
+    public static final int TEXTURE_BLOCK_CORNER    = 13;
+    public static final int TEXTURE_BLOCK_TOP	    = 14;
+    public static final int TEXTURE_BLOCK_SIDES     = 15;
+    public static final int TEXTURE_BLOCK_END       = 16;
+    public static final int TEXTURE_BLACK           = 17;
+    public static final int TEXTURE_FENCE_LEFT	    = 18;
+    public static final int TEXTURE_FENCE_RIGHT	    = 19;
+    public static final int TEXTURE_FENCE_NO_CONN   = 20;
+    public static final int TEXTURE_LINE_CORNER     = 21;
+    public static final int TEXTURE_LINE_TOP        = 22;
+    public static final int TEXTURE_LINE_SIDES      = 23;
+    public static final int TEXTURE_LINE_END        = 24;
+    public static final int TEXTURE_FASADA          = 25;
+    public static final int TEXTURE_GRASSX          = 26;
+    public static final int GRASS_TEXTURE_COUNT     = 16;
+    public static final int TEXTURE_DIRT0           = 42;
+    public static final int TEXTURE_DIRT1           = 43;
+    public static final int TEXTURE_COBBLEX         = 44;
+    public static final int COBBLE_TEXTURE_COUNT    = 8;
+    
+    public static final int[] SOLID_IDs = {
+            TEXTURE_BLOCK, TEXTURE_WATER, TEXTURE_PLUM, TEXTURE_FENCE_FULL,
+            TEXTURE_DOOR, TEXTURE_BLOCK_CORNER, TEXTURE_BLOCK_TOP, TEXTURE_BLOCK_SIDES,
+            TEXTURE_BLOCK_END, TEXTURE_BLACK, TEXTURE_FENCE_LEFT, TEXTURE_FENCE_RIGHT, 
+            TEXTURE_FENCE_NO_CONN, TEXTURE_LINE_CORNER, TEXTURE_LINE_TOP, TEXTURE_LINE_SIDES,
+            TEXTURE_LINE_END
+    };
     
     /**
      * Old constructor
