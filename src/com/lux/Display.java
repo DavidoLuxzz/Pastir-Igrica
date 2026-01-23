@@ -17,15 +17,12 @@ import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
 
 public class Display {
     private Pane root;
     private Scene scene;
     private Stage stage;
-
-    private Scale contentScale;
     
     private ImageView staticBlur;
     private Rectangle opacityEffect;

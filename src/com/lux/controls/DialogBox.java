@@ -93,7 +93,7 @@ public class DialogBox {
     }
     
     public static void updatePos(Display root, double x, double y){
-        boxView.setLayoutX(x + root.DEFAULT_WIDTH/2 - boxView.getImage().getWidth()/2);
+        boxView.setLayoutX(x + Display.DEFAULT_WIDTH/2 - boxView.getImage().getWidth()/2);
         boxView.setLayoutY(y + root.getHeight()  - boxView.getImage().getHeight() - yOffset);
         if (Main.getPlayer().getCenterY()+30 > boxView.getLayoutY())
             boxView.setLayoutY(y + yOffset);
